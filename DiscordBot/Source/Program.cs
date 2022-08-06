@@ -1,0 +1,1 @@
+﻿new Bot().MainAsync().GetAwaiter().GetResult();
