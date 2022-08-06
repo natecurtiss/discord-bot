@@ -14,9 +14,10 @@ class CommandHandler
         _client = client;
         _service = new();
         _service.AddModulesAsync(Assembly.GetEntryAssembly(), null);
+        _client.MessageReceived += HandleCommands;
     }
 
-    async Task HandleCommands(SocketMessage msg)
+    public async Task HandleCommands(SocketMessage msg)
     {
         if (msg is not SocketUserMessage message)
             return;
@@ -25,9 +26,9 @@ class CommandHandler
         if (message.HasCharPrefix('_', ref argPos))
         {
             var result = await _service.ExecuteAsync(ctx, argPos, null);
-            if (!result.IsSuccess && result.Error != CommandError.UnknownCommand)
+            if (!result.IsSuccess)
             {
-                
+                ctx.Channel.SendMessageAsync(result.ErrorReason);
             }
         }
 
