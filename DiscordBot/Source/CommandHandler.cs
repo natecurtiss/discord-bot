@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
@@ -26,10 +27,8 @@ class CommandHandler
         if (message.HasCharPrefix('_', ref argPos))
         {
             var result = await _service.ExecuteAsync(ctx, argPos, null);
-            if (!result.IsSuccess)
-            {
-                ctx.Channel.SendMessageAsync(result.ErrorReason);
-            }
+            if (!result.IsSuccess) 
+                await ctx.Message.ReplyAsync(result.ErrorReason);
         }
 
     }
