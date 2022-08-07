@@ -3,7 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 
-namespace DiscordBot.Modules;
+namespace DiscordBot.Modules.Levels;
 
 public class Currency : ModuleBase<SocketCommandContext>
 {
@@ -15,7 +15,7 @@ public class Currency : ModuleBase<SocketCommandContext>
     {
         foreach (var user in Context.Guild.Users.ToArray()) 
             await UserJoined(user);
-        await Context.Message.ReplyAsync($"Initialized {Context.Guild.Users.ToArray().Length} users with the level system.");
+        await Context.Message.ReplyAsync($"Initialized {Context.Guild.Users.ToArray().Length} users with the level system");
     }
 
     public async Task UserJoined(SocketGuildUser user)

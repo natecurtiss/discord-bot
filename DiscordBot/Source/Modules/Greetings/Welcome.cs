@@ -4,7 +4,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Newtonsoft.Json;
 
-namespace DiscordBot.Modules;
+namespace DiscordBot.Modules.Greetings;
 
 public class Welcome : ModuleBase<SocketCommandContext>
 {
@@ -40,7 +40,7 @@ public class Welcome : ModuleBase<SocketCommandContext>
             {
                 Title = $"Welcome to n8dev's cafe {user.Username}!",
                 Description = "We hope you enjoy your stay :)",
-                Color = new Color(0x2f3136),
+                Color = Resources.EmbedColor,
                 ThumbnailUrl = user.GetAvatarUrl()
             };
             await msgChannel.SendMessageAsync("", false, embed.Build());
@@ -61,7 +61,7 @@ public class Welcome : ModuleBase<SocketCommandContext>
             {
                 Title = $"I can't believe {user.Username} left.",
                 Description = "We didn't need them anyway.",
-                Color = new Color(0x2f3136),
+                Color = Resources.EmbedColor,
                 ThumbnailUrl = user.GetAvatarUrl()
             };
             await msgChannel.SendMessageAsync("", false, embed.Build());

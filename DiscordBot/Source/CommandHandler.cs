@@ -3,6 +3,8 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordBot.Modules;
+using DiscordBot.Modules.Greetings;
+using DiscordBot.Modules.Levels;
 
 namespace DiscordBot;
 
