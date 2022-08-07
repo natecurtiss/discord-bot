@@ -59,7 +59,7 @@ public class Currency : ModuleBase<SocketCommandContext>
         var list = new StringBuilder();
         for (var i = 0; i < 10; i++)
         {
-            var next = members.MaxBy(m => m.Value[Context.Guild.Id]);
+            var next = members.Where(m =>  m.Value.ContainsKey(Context.Guild.Id)).MaxBy(m => m.Value[Context.Guild.Id]);
             members.Remove(next.Key);
             list.Append($"**{i + 1}.** {Context.Guild.GetUser(next.Key).Username} - {next.Value[Context.Guild.Id]}xp\n");
         }
