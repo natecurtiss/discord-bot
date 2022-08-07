@@ -6,7 +6,7 @@ namespace DiscordBot.Modules;
 public class Admin : ModuleBase<SocketCommandContext>
 {
     [Command("timeout")]
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireUserPermission(GuildPermission.KickMembers)]
     public async Task Timeout(IGuildUser user, int minutes)
     {
         if (minutes <= 0)
@@ -19,7 +19,7 @@ public class Admin : ModuleBase<SocketCommandContext>
     }
     
     [Command("untimeout")]
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireUserPermission(GuildPermission.KickMembers)]
     public async Task UnTimeout(IGuildUser user)
     {
         await user.RemoveTimeOutAsync();
@@ -27,7 +27,7 @@ public class Admin : ModuleBase<SocketCommandContext>
     }
     
     [Command("kick")]
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireUserPermission(GuildPermission.KickMembers)]
     public async Task Kick(IGuildUser user)
     {
         await user.KickAsync();
@@ -35,7 +35,7 @@ public class Admin : ModuleBase<SocketCommandContext>
     }
     
     [Command("ban")]
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireUserPermission(GuildPermission.BanMembers)]
     public async Task Ban(IGuildUser user)
     {
         await user.BanAsync();
@@ -43,7 +43,7 @@ public class Admin : ModuleBase<SocketCommandContext>
     }
     
     [Command("purge")]
-    [RequireUserPermission(GuildPermission.Administrator)]
+    [RequireUserPermission(GuildPermission.ManageMessages)]
     public async Task Purge(int amount)
     {
         if (amount <= 0)

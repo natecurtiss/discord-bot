@@ -7,7 +7,7 @@ MainAsync().GetAwaiter().GetResult();
 async Task MainAsync()
 {
     var intents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers | GatewayIntents.GuildBans;
-    var config = new DiscordSocketConfig { GatewayIntents = intents };
+    var config = new DiscordSocketConfig { GatewayIntents = intents, AlwaysDownloadUsers = true };
     var client = new DiscordSocketClient(config);
     var token = Environment.GetEnvironmentVariable("TOKEN");
     await client.LoginAsync(TokenType.Bot, token);

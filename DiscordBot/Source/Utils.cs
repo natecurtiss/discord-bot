@@ -7,5 +7,5 @@ namespace DiscordBot;
 
 static class Utils
 {
-    public static string GetFile(string name, [CallerFilePath] string path = default) => Join(GetParent(path ?? Empty)?.Parent?.FullName, $"/{name}");
+    public static string GetFile(string name, [CallerFilePath] string path = default) => Join(GetParent(path ?? Empty)?.FullName, $"/{name}");
 }

@@ -8,12 +8,14 @@ namespace DiscordBot.Modules;
 
 public class Welcome : ModuleBase<SocketCommandContext>
 {
+    readonly string _jsonFile = "Welcome.json";
+    
     [Command("welcome")]
     [RequireUserPermission(GuildPermission.Administrator)]
     public async Task SetWelcomeChannel(long channelID, [CallerFilePath] string path = default)
     {
         var guildID = (long) Context.Guild.Id;
-        var file = Utils.GetFile("Data.json");
+        var file = Utils.GetFile(_jsonFile);
         var dict = JsonConvert.DeserializeObject<Dictionary<long, long>>(await File.ReadAllTextAsync(file));
         if (dict.ContainsKey(guildID))
             dict[guildID] = channelID;
@@ -25,7 +27,7 @@ public class Welcome : ModuleBase<SocketCommandContext>
 
     public async Task UserJoined(SocketGuildUser user)
     {
-        var file = Utils.GetFile("Data.json");
+        var file = Utils.GetFile(_jsonFile);
         var dict = JsonConvert.DeserializeObject<Dictionary<long, long>>(await File.ReadAllTextAsync(file));
         var guildID = (long) user.Guild.Id;
         if (dict.ContainsKey(guildID))
@@ -47,7 +49,7 @@ public class Welcome : ModuleBase<SocketCommandContext>
     
     public async Task UserLeft(SocketGuild guild, SocketUser user)
     {
-        var file = Utils.GetFile("Data.json");
+        var file = Utils.GetFile(_jsonFile);
         var dict = JsonConvert.DeserializeObject<Dictionary<long, long>>(await File.ReadAllTextAsync(file));
         var guildID = (long) guild.Id;
         if (dict.ContainsKey(guildID))
