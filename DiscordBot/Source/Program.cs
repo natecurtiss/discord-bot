@@ -12,6 +12,7 @@ async Task MainAsync()
     var token = Environment.GetEnvironmentVariable("TOKEN");
     await client.LoginAsync(TokenType.Bot, token);
     await client.StartAsync();
+    Console.WriteLine("Running...");
     var commands = new CommandHandler(client);
     await Task.Delay(-1);
 }
