@@ -44,4 +44,25 @@ public class Welcome : ModuleBase<SocketCommandContext>
             await msgChannel.SendMessageAsync("", false, embed.Build());
         }
     }
+    
+    public async Task UserLeft(SocketGuild guild, SocketUser user)
+    {
+        var file = Utils.GetFile("Data.json");
+        var dict = JsonConvert.DeserializeObject<Dictionary<long, long>>(await File.ReadAllTextAsync(file));
+        var guildID = (long) guild.Id;
+        if (dict.ContainsKey(guildID))
+        {
+            var channel = guild.GetChannel((ulong) dict[guildID]);
+            if (channel is not ISocketMessageChannel msgChannel)
+                return;
+            var embed = new EmbedBuilder
+            {
+                Title = $"I can't believe {user.Username} left.",
+                Description = "We didn't need them anyway.",
+                Color = new Color(0x2f3136),
+                ThumbnailUrl = user.GetAvatarUrl()
+            };
+            await msgChannel.SendMessageAsync("", false, embed.Build());
+        }
+    }
 }

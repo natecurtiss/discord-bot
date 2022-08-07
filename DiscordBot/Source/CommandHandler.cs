@@ -20,6 +20,7 @@ class CommandHandler
         _service.AddModulesAsync(Assembly.GetEntryAssembly(), null);
         _client.MessageReceived += HandleCommands;
         _client.UserJoined += _welcome.UserJoined;
+        _client.UserLeft += _welcome.UserLeft;
     }
 
     public async Task HandleCommands(SocketMessage msg)
