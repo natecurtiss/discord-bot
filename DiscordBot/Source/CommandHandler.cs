@@ -26,6 +26,7 @@ class CommandHandler
         _client.UserJoined += _welcome.UserJoined;
         _client.UserLeft += _welcome.UserLeft;
         _client.UserJoined += _currency.UserJoined;
+        _client.UserLeft += _currency.UserLeft;
         _client.MessageReceived += _currency.MessageSent;
     }
 
@@ -35,7 +36,7 @@ class CommandHandler
             return;
         var ctx = new SocketCommandContext(_client, message);
         var argPos = 0;
-        if (message.HasCharPrefix('_', ref argPos))
+        if (message.HasCharPrefix(Resources.Prefix, ref argPos))
         {
             var result = await _service.ExecuteAsync(ctx, argPos, null);
             if (!result.IsSuccess) 

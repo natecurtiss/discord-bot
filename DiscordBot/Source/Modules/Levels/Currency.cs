@@ -19,13 +19,25 @@ public class Currency : ModuleBase<SocketCommandContext>
         await Context.Message.ReplyAsync($"Initialized {Context.Guild.Users.ToArray().Length} users with the level system");
     }
     
-    [Command("clearlevels")]
+    [Command("resetlevels")]
     [RequireUserPermission(GuildPermission.Administrator)]
-    public async Task ClearLevels()
+    public async Task ResetLevels()
+    {
+        foreach (var user in Context.Guild.Users.ToArray())
+        {
+            await UserLeft(Context.Guild, user);
+            await UserJoined(user);
+        }
+        await Context.Message.ReplyAsync($"Reset {Context.Guild.Users.ToArray().Length} users with the level system");
+    }
+    
+    [Command("hardresetalllevels")]
+    [RequireUserPermission(GuildPermission.Administrator)]
+    public async Task HardResetAllLevels()
     {
         var file = Utils.GetFile(_jsonFile);
         await File.WriteAllTextAsync(file, "{}");
-        await Context.Message.ReplyAsync("Cleared level system");
+        await Context.Message.ReplyAsync("Hard reset level system");
     }
 
     [Command("level")]
@@ -57,9 +69,33 @@ public class Currency : ModuleBase<SocketCommandContext>
             Color = Resources.EmbedColor,
             Description = list.ToString(),
         };
-        Console.WriteLine(Context.Guild.IconUrl);
         await Context.Message.ReplyAsync("", false, embed.Build());
     }
+
+    [Command("give")]
+    [RequireUserPermission(GuildPermission.Administrator)]
+    public async Task Give(IUser user, int xp)
+    {
+        if (user.IsBot)
+            return;
+        var file = Utils.GetFile(_jsonFile);
+        var members = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<ulong, int>>>(await File.ReadAllTextAsync(file));
+        if (members.ContainsKey(user.Id))
+        {
+            var member = members[user.Id];
+            if (!member.ContainsKey(Context.Guild.Id))
+                member.Add(Context.Guild.Id, xp);
+            else
+                member[Context.Guild.Id] += xp;
+        }
+        else
+        {
+            members.Add(user.Id, new() {{Context.Guild.Id, xp}});
+        }
+        await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(members));
+        await Context.Message.ReplyAsync($"Gave {user.Mention} **{xp}** xp");
+    }
+    
     public async Task UserJoined(SocketGuildUser user)
     {
         if (user.IsBot)
@@ -78,11 +114,29 @@ public class Currency : ModuleBase<SocketCommandContext>
         }
         await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(members));
     }
+    
+    public async Task UserLeft(SocketGuild guild, SocketUser user)
+    {
+        if (user.IsBot)
+            return;
+        var file = Utils.GetFile(_jsonFile);
+        var members = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<ulong, int>>>(await File.ReadAllTextAsync(file));
+        if (members.ContainsKey(user.Id))
+        {
+            var member = members[user.Id];
+            if (member.ContainsKey(guild.Id))
+                member.Remove(guild.Id);
+        }
+        await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(members));
+    }
 
     public async Task MessageSent(SocketMessage message)
     {
         if (message.Author.IsBot)
             return;
+        if (message.Content.StartsWith(Resources.Prefix))
+            return;
+        var amt = Utils.Random(15, 25);
         var channel = message.Channel as SocketGuildChannel;
         var file = Utils.GetFile(_jsonFile);
         var members = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<ulong, int>>>(await File.ReadAllTextAsync(file));
@@ -91,13 +145,13 @@ public class Currency : ModuleBase<SocketCommandContext>
         {
             var member = members[user.Id];
             if (!member.ContainsKey(channel.Guild.Id))
-                member.Add(channel.Guild.Id, 1);
+                member.Add(channel.Guild.Id, amt);
             else
-                member[channel.Guild.Id] += 1;
+                member[channel.Guild.Id] += amt;
         }
         else
         {
-            members.Add(user.Id, new() {{channel.Guild.Id, 1}});
+            members.Add(user.Id, new() {{channel.Guild.Id, amt}});
         }
         await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(members));
     }
