@@ -11,7 +11,7 @@ public class Admin : ModuleBase<SocketCommandContext>
     {
         if (minutes <= 0)
         {
-            await ReplyAsync("Number of minutes must be positive!");
+            await Context.Message.ReplyAsync("Number of minutes must be positive!");
             return;
         }
         await user.SetTimeOutAsync(TimeSpan.FromMinutes(minutes));

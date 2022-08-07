@@ -22,4 +22,20 @@ public class Welcome : ModuleBase<SocketCommandContext>
         await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(dict));
         await Context.Message.ReplyAsync($"Changed welcome channel to <#{channelID}>");
     }
+
+    public async Task UserJoined(SocketGuildUser user)
+    {
+        Console.WriteLine(user.Nickname);
+        var file = Utils.GetFile("Data.json");
+        var dict = JsonConvert.DeserializeObject<Dictionary<long, long>>(await File.ReadAllTextAsync(file));
+        var guildID = (long) user.Guild.Id;
+        if (dict.ContainsKey(guildID))
+        {
+            var channel = user.Guild.GetChannel((ulong) dict[guildID]);
+            if (channel is not ISocketMessageChannel msgChannel)
+                return;
+            Console.WriteLine(user.Nickname + " joined");
+            await msgChannel.SendMessageAsync($"{user.Mention} welcome to n8dev's cafe!");
+        }
+    }
 }
