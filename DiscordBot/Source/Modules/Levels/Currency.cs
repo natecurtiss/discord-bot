@@ -18,6 +18,17 @@ public class Currency : ModuleBase<SocketCommandContext>
         await Context.Message.ReplyAsync($"Initialized {Context.Guild.Users.ToArray().Length} users with the level system");
     }
 
+    [Command("level")]
+    public async Task GetLevel() => await GetLevel(Context.Message.Author);
+
+    [Command("level")]
+    public async Task GetLevel(IUser user)
+    {
+        var file = Utils.GetFile(_jsonFile);
+        var members = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<ulong, int>>>(await File.ReadAllTextAsync(file));
+        await Context.Message.ReplyAsync($"{user.Mention} has **{members[user.Id][Context.Guild.Id]}** xp");
+    }
+
     public async Task UserJoined(SocketGuildUser user)
     {
         var file = Utils.GetFile(_jsonFile);
@@ -32,6 +43,28 @@ public class Currency : ModuleBase<SocketCommandContext>
         {
             members.Add(user.Id, new() {{user.Guild.Id, 0}});
         }
+        await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(members));
+    }
+
+    public async Task MessageSent(SocketMessage message)
+    {
+        var channel = message.Channel as SocketGuildChannel;
+        var file = Utils.GetFile(_jsonFile);
+        var members = JsonConvert.DeserializeObject<Dictionary<ulong, Dictionary<ulong, int>>>(await File.ReadAllTextAsync(file));
+        var user = message.Author;
+        if (members.ContainsKey(user.Id))
+        {
+            var member = members[user.Id];
+            if (!member.ContainsKey(user.Id))
+                member.Add(channel.Guild.Id, 1);
+            else
+                member[channel.Guild.Id] += 1;
+        }
+        else
+        {
+            members.Add(user.Id, new() {{channel.Guild.Id, 1}});
+        }
+        Console.WriteLine($"{message.Author.Username} has {members[user.Id][channel.Guild.Id]} coins");
         await File.WriteAllTextAsync(file, JsonConvert.SerializeObject(members));
     }
 }

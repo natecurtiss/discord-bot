@@ -26,6 +26,7 @@ class CommandHandler
         _client.UserJoined += _welcome.UserJoined;
         _client.UserLeft += _welcome.UserLeft;
         _client.UserJoined += _currency.UserJoined;
+        _client.MessageReceived += _currency.MessageSent;
     }
 
     public async Task HandleCommands(SocketMessage msg)
