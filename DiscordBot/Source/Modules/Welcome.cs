@@ -33,7 +33,15 @@ public class Welcome : ModuleBase<SocketCommandContext>
             var channel = user.Guild.GetChannel((ulong) dict[guildID]);
             if (channel is not ISocketMessageChannel msgChannel)
                 return;
-            await msgChannel.SendMessageAsync($"{user.Mention} welcome to n8dev's cafe!");
+            // await msgChannel.SendMessageAsync($"{user.Mention} welcome to n8dev's cafe!");
+            var embed = new EmbedBuilder()
+            {
+                Title = $"Welcome to n8dev's cafe {user.Username}!",
+                Description = "We hope you enjoy your stay :)",
+                Color = new Color(0x2f3136),
+                ThumbnailUrl = user.GetAvatarUrl()
+            };
+            await msgChannel.SendMessageAsync("", false, embed.Build());
         }
     }
 }
